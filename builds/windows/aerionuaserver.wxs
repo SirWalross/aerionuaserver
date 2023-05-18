@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?ifndef ProductVersion?>
+<?error ProductVersion property not defined?>
+<?endif?>
+
+<!-- Define a unique UpgradeCode per platform -->
+<?if $(var.Platform) = "x64"?>
+<?define InstallerVersion = "301"?>
+<?define UpgradeCode = "8CFB9531-B959-4E1B-AA2E-4AF0FFCC4AF4"?>
+<?define ProgramFilesFolder = "ProgramFiles64Folder"?>
+<?endif?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="AerionUAServer" Version="$(var.ProductVersion)" Language="1033" Manufacturer="Lennard Kloock" UpgradeCode="$(var.UpgradeCode)">
+
+		<Package Compressed="yes" InstallerVersion="$(var.InstallerVersion)" InstallScope="perMachine"/>
+		<MediaTemplate EmbedCab="yes"/>
+
+		<!-- Remove older product(s) early but within the transaction -->
+		<MajorUpgrade Schedule="afterInstallInitialize" DowngradeErrorMessage="A newer version of !(bind.property.ProductName) is already installed."/>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.ProgramFilesFolder)" Name="Program Files">
+				<Directory Id="INSTALLDIR" Name="Aerion OPC-UA Server" />
+			</Directory>
+			<Directory Id="ProgramMenuFolder" />
+			<Directory Id="StartupFolder" />
+			<Directory Id="AppDataFolder">
+				<Directory Id="AerionRoamingFolder" Name="Aerion OPC-UA Server">
+					<Directory Id="SPECIFICATIONS" Name="specifications"/>
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<!-- Install merge modules -->
+		<DirectoryRef Id="TARGETDIR">
+			<Merge Id="VCRedist" SourceFile="Microsoft_VC143_CRT_x64.msm" DiskId="1" Language="0"/>
+		</DirectoryRef>
+
+		<Feature Id="DefaultFeature" ConfigurableDirectory="INSTALLDIR">
+			<Component Directory="INSTALLDIR" Id="executables" Guid="12345678-1234-1234-1234-333333313330">
+				<File Name="aerionuaserver.exe"/>
+				<File Name="aerionuaserver-gui.exe"/>
+				<File Name="fmt.dll"/>
+				<File Name="libcrypto-3-x64.dll"/>
+				<File Name="open62541.dll"/>
+				<File Name="reproc.dll"/>
+				<File Name="reproc++.dll"/>
+				<File Name="re2.dll"/>
+				<File Name="libzmq-mt-4_3_4.dll"/>
+				<File Name="efsw.dll"/>
+				<File Name="icon.ico"/>
+				<Environment Id="Path" Action="set" Name="PATH" Part="last" System="yes" Value="[INSTALLDIR]"/>
+			</Component>
+			<Component Directory="SPECIFICATIONS" Id="robot_spec_file" Guid="12345678-1234-1234-1234-333333333331">
+				<File Source="specifications\robot-specification.json"/>
+				<RegistryValue Root="HKCU"
+                    Key="Software\Lennard Kloock\Aerion OPC-UA Server"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+			</Component>
+			<Component Directory="SPECIFICATIONS" Id="plc_spec_file" Guid="12345678-1234-1234-1234-333333333332">
+				<File Source="specifications\plc-specification.json"/>
+				<RegistryValue Root="HKCU"
+                    Key="Software\Lennard Kloock\Aerion OPC-UA Server"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+			</Component>
+			<Component Directory="SPECIFICATIONS" Id="remove_specs_folder" Guid="12345678-1234-1234-1234-333333333328">
+				<RemoveFolder Id='RemoveSpecificationsFolder' Directory='SPECIFICATIONS' On='uninstall' />
+				<RegistryValue Root="HKCU"
+                    Key="Software\Lennard Kloock\Aerion OPC-UA Server"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+			</Component>
+			<Component Directory="AerionRoamingFolder" Id="remove_aerion_roaming_folder" Guid="12345678-1234-1234-1234-333333333329">
+				<RemoveFolder Id='RemoveRoamingFolder' Directory='AerionRoamingFolder' On='uninstall' />
+				<RegistryValue Root="HKCU"
+                    Key="Software\Lennard Kloock\Aerion OPC-UA Server"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+			</Component>
+			<Component Directory="ProgramMenuFolder" Id="programmenu_shortcut" Guid="12345678-1234-1234-1234-333333333333">
+				<Shortcut Id="ApplicationShortcut"
+                     Name="Aerion OPC-UA Server"
+                     Directory="ProgramMenuFolder"
+                     Target="[INSTALLDIR]aerionuaserver.exe"
+                     Icon ="icon.ico" />
+				<RemoveFile Id="remove_programmenu_shortcut" Name="Aerion OPC-UA Server" On="uninstall"/>
+				<RegistryValue Root="HKCU"
+                    Key="Software\Lennard Kloock\Aerion OPC-UA Server"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+			</Component>
+			<Component Directory="StartupFolder" Id="startup_shortcut" Guid="12345678-1234-1234-1234-333333333334">
+				<Shortcut Id="StartupApplicationShortcut"
+                     Name="Aerion OPC-UA Server"
+                     Directory="StartupFolder"
+                     Target="[INSTALLDIR]aerionuaserver.exe"
+                     Icon="icon.ico" />
+				<RemoveFile Id="remove_startup_shortcut" Name="Aerion OPC-UA Server" On="uninstall"/>
+				<RegistryValue Root="HKCU"
+                    Key="Software\Lennard Kloock\Aerion OPC-UA Server"
+                    Name="installed"
+                    Type="integer"
+                    Value="1"
+                    KeyPath="yes" />
+			</Component>
+		</Feature>
+
+		<Feature Id="VCRedist" Title="Visual C++ v143 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+			<MergeRef Id="VCRedist"/>
+		</Feature>
+
+		<!-- WebView2 -->
+		<Property Id="WVRTINSTALLED">
+			<RegistrySearch Id="WVRTInstalledSystem" Root="HKLM" Key="SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw" Win64="no" />
+			<RegistrySearch Id="WVRTInstalledUser" Root="HKCU" Key="SOFTWARE\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}" Name="pv" Type="raw"/>
+		</Property>
+		<CustomAction Id='DownloadAndInvokeBootstrapper' Directory="INSTALLDIR" Execute="deferred" ExeCommand='powershell.exe -NoProfile -windowstyle hidden try [\{] [\[]Net.ServicePointManager[\]]::SecurityProtocol = [\[]Net.SecurityProtocolType[\]]::Tls12 [\}] catch [\{][\}]; Invoke-WebRequest -Uri "https://go.microsoft.com/fwlink/p/?LinkId=2124703" -OutFile "$env:TEMP\MicrosoftEdgeWebview2Setup.exe" ; Start-Process -FilePath "$env:TEMP\MicrosoftEdgeWebview2Setup.exe" -ArgumentList ({{{webview_installer_args}}} &apos;/install&apos;) -Wait' Return='check'/>
+		<InstallExecuteSequence>
+			<Custom Action='DownloadAndInvokeBootstrapper' Before='InstallFinalize'>
+				<![CDATA[NOT(REMOVE OR WVRTINSTALLED)]]>
+			</Custom>
+		</InstallExecuteSequence>
+
+
+		<!-- Set icon -->
+		<Icon Id="icon.ico" SourceFile="resources\icon.ico" />
+		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+		<!-- Broadcast environment variable changes -->
+		<CustomActionRef Id="WixBroadcastEnvironmentChange" />
+
+		<!-- Use customized WixUI_InstallDir that removes WixUI_LicenseAgreementDlg -->
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
+		<UIRef Id="InstallUI"/>
+
+		<!-- Add option to launch application after installation -->
+		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Aerion OPC-UA Server" />
+		<Property Id="WixShellExecTarget" Value="[#aerionuaserver.exe]" />
+		<CustomAction Id="LaunchApplication"
+			BinaryKey="WixCA"
+			DllEntry="WixShellExec"
+			Impersonate="yes" />
+	</Product>
+</Wix>

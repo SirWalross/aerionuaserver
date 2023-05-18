@@ -1,0 +1,13 @@
+---
+BasedOnStyle: Google
+IndentWidth: 4
+---
+Language: Cpp
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
+PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: Empty
+NamespaceIndentation: All
+AllowShortIfStatementsOnASingleLine: Never
+AlignConsecutiveAssignments: 'false'
+ColumnLimit: 120

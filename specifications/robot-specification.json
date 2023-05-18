@@ -1,0 +1,741 @@
+{
+    "Nodes": [
+        {
+            "Name": "MotionDevices",
+            "Type": "Folder",
+            "Count": {
+                "Command": "OPEN=ROBOT",
+                "Match": "^(?:[^;]*;){{13}}([^;]*);?",
+                "Datatype": "BitCount"
+            },
+            "FolderChild": {
+                "Name": "MotionDevice_{i}",
+                "Type": "Object",
+                "Children": [
+                    {
+                        "Name": "Axes",
+                        "Type": "Folder",
+                        "Count": 8,
+                        "FolderChild": {
+                            "Name": "Axis_J{i}",
+                            "Type": "Object",
+                            "Children": [
+                                {
+                                    "Name": "MotionProfile",
+                                    "Type": "EnumProperty", // the datatype of enum properties are automatically `String`
+                                    "ReadCommand": {
+                                        "Command": "OPEN=ROBOT",
+                                        "Match": "^(?:[^;]*;){{6}}([^;]*);?"
+                                    },
+                                    "Cases": {
+                                        ".*": {
+                                            "EnumString": "ROTARY",
+                                            "Value": 1
+                                        },
+                                        "Default": {
+                                            "EnumString": "OTHER",
+                                            "Value": 0
+                                        }
+                                    }
+                                },
+                                {
+                                    "Name": "ParameterSet",
+                                    "Type": "Object",
+                                    "Children": [
+                                        {
+                                            "Name": "ActualPosition",
+                                            "Type": "Value",
+                                            "Datatype": "Double",
+                                            "ReadCommand": {
+                                                "Command": "JPOS{i}",
+                                                "Match": "^[^;]*;([^;]*);?"
+                                            },
+                                            "Writeable": false
+                                        },
+                                        {
+                                            "Name": "ActualSpeed",
+                                            "Type": "Value",
+                                            "Datatype": "Double",
+                                            "ReadCommand": {
+                                                "Command": "SRVSPD",
+                                                "Match": "^(?:[^;]*;){{{i3}}}([^;]*);?"
+                                            },
+                                            "Writeable": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "Condition": {
+                                "Command": "JPOSF",
+                                "Match": "J{i}"
+                            }
+                        }
+                    },
+                    {
+                        "Name": "PowerTrains",
+                        "Type": "Folder",
+                        "Count": 8,
+                        "FolderChild": {
+                            "Name": "PowerTrain_{i}",
+                            "Type": "Object",
+                            "Children": [
+                                {
+                                    "Name": "MotorIdentifier",
+                                    "Type": "Object",
+                                    "Children": [
+                                        {
+                                            "Name": "ParameterSet",
+                                            "Type": "Object",
+                                            "Children": [
+                                                {
+                                                    "Name": "MotorTemperature",
+                                                    "Type": "Value",
+                                                    "Datatype": "Double",
+                                                    "ReadCommand": {
+                                                        "Command": "ETEMP",
+                                                        "Match": "^(?:[^;]*;){{{i1}}}([^;]*);?"
+                                                    },
+                                                    "Writeable": false
+                                                },
+                                                {
+                                                    "Name": "EffectiveLoadRatio",
+                                                    "Type": "Value",
+                                                    "Datatype": "Double",
+                                                    "ReadCommand": {
+                                                        "Command": "SRVLCR",
+                                                        "Match": "^(?:[^;]*;){{{i2}}}([^;]*);?"
+                                                    },
+                                                    "Writeable": false
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "Name": "Manufacturer",
+                                            "Type": "Property",
+                                            "Value": "Mitsubishi Electric"
+                                        },
+                                        {
+                                            "Name": "Model",
+                                            "Type": "Property",
+                                            "Value": ""
+                                        },
+                                        {
+                                            "Name": "SerialNumber",
+                                            "Type": "Property",
+                                            "Value": "1"
+                                        },
+                                        {
+                                            "Name": "ProductCode",
+                                            "Type": "Property",
+                                            "Value": "1"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "Condition": {
+                                "Command": "JPOSF",
+                                "Match": "J{i}"
+                            }
+                        }
+                    },
+                    {
+                        "Name": "Manufacturer",
+                        "Type": "Property",
+                        "Value": "Mitsubishi Electric"
+                    },
+                    {
+                        "Name": "Model",
+                        "Type": "Property", // the datatype of properties are automatically `String`
+                        "ReadCommand": {
+                            "Command": "OPEN=ROBOT",
+                            "Match": "^(?:[^;]*;){{6}}([^;]*);?"
+                        }
+                    },
+                    {
+                        "Name": "SerialNumber",
+                        "Type": "Property",
+                        "ReadCommand": {
+                            "Command": "RAREAD=",
+                            "Match": "^[^;]*;([^;]*);?"
+                        }
+                    },
+                    {
+                        "Name": "ProductCode",
+                        "Type": "Property",
+                        "Value": "1"
+                    },
+                    {
+                        "Name": "MotionDeviceCategory",
+                        "Type": "EnumProperty",
+                        "ReadCommand": {
+                            "Command": "OPEN=ROBOT",
+                            "Match": "^(?:[^;]*;){{6}}([^;]*);?"
+                        },
+                        "Cases": {
+                            "^[rR][hH]": {
+                                "EnumString": "SCARA_ROBOT",
+                                "Value": 2
+                            },
+                            "^[rR][vV]": {
+                                "EnumString": "ARTICULATED_ROBOT",
+                                "Value": 1
+                            },
+                            "Default": {
+                                "EnumString": "OTHER",
+                                "Value": 0
+                            }
+                        }
+                    },
+                    {
+                        "Name": "ParameterSet",
+                        "Type": "Object",
+                        "Children": [
+                            {
+                                "Name": "SpeedOverride",
+                                "Type": "Value",
+                                "Datatype": "Int32",
+                                "ReadCommand": {
+                                    "Command": "OVRD",
+                                    "Match": "([^;]*)"
+                                },
+                                "Writeable": false
+                            },
+                            {
+                                "Name": "InControl",
+                                "Type": "Value",
+                                "Datatype": "Bool",
+                                "ReadCommand": {
+                                    "Command": "VALM_Svo;M",
+                                    "Match": "\\+([^;]*)",
+                                    "Position": 0 // the position of the bit to be used as the bool value
+                                },
+                                "Writeable": false
+                            }
+                        ]
+                    },
+                    {
+                        "Name": "AdditionalComponents", // only being shown on first mecha
+                        "Type": "Folder",
+                        "Count": {
+                            "Command": "OPNUMRD",
+                            "Match": "(.*)",
+                            "Datatype": "UInt16"
+                        },
+                        "FolderChild": {
+                            "Name": "Slot_{i}",
+                            "Type": "Object",
+                            "Children": [
+                                {
+                                    "Name": "ProductType",
+                                    "Type": "Property",
+                                    "ReadCommand": {
+                                        "Command": "OPSTSRD{i}",
+                                        "Match": "^([^;]*);?"
+                                    }
+                                },
+                                {
+                                    "Name": "Description",
+                                    "Type": "Property",
+                                    "ReadCommand": {
+                                        "Command": "OPSTSRD{i}",
+                                        "Match": "^[^;]*;([^;]*);?"
+                                    }
+                                }
+                            ],
+                            "Condition": {
+                                "Command": "OPSTSRD{i}",
+                                "Match": "^[^;]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "Name": "Controllers",
+            "Type": "Folder",
+            "Count": 1,
+            "FolderChild": {
+                "Name": "Controller_{i}",
+                "Type": "Object",
+                "Children": [
+                    {
+                        "Name": "Manufacturer",
+                        "Type": "Property",
+                        "Value": "Mitsubishi Electric"
+                    },
+                    {
+                        "Name": "SerialNumber",
+                        "Type": "Property",
+                        "ReadCommand": {
+                            "Command": "RAREAD=",
+                            "Match": "^[^;]*;([^;]*);?"
+                        },
+                        "Writeable": false
+                    },
+                    {
+                        "Name": "Model",
+                        "Type": "Property",
+                        "ReadCommand": {
+                            "Command": "OPEN=ROBOT",
+                            "Match": "^(?:[^;]*;){{7}}([^;]*);?"
+                        },
+                        "Writeable": false
+                    },
+                    {
+                        "Name": "ProductCode",
+                        "Type": "Property",
+                        "Value": "1"
+                    },
+                    {
+                        "Name": "ParameterSet",
+                        "Type": "Object",
+                        "Children": [
+                            {
+                                "Name": "TotalPowerOnTime",
+                                "Type": "Value",
+                                "Datatype": "Double",
+                                "ReadCommand": {
+                                    "Command": "PTIME",
+                                    "Match": "^([^;]*);?"
+                                },
+                                "Writeable": false
+                            },
+                            {
+                                "Name": "ServoOnTime",
+                                "Type": "Value",
+                                "Datatype": "Double",
+                                "ReadCommand": {
+                                    "Command": "PTIME",
+                                    "Match": "^[^;]*;([^;]*);?"
+                                },
+                                "Writeable": false
+                            },
+                            {
+                                "Name": "Temperature",
+                                "Type": "Value",
+                                "Datatype": "Double",
+                                "ReadCommand": {
+                                    "Command": "THMRD",
+                                    "Match": "^([^;]*);?"
+                                },
+                                "Writeable": false
+                            }
+                        ]
+                    },
+                    {
+                        "Name": "TaskControls",
+                        "Type": "Folder",
+                        "Count": {
+                            "Command": "OPEN=ROBOT",
+                            "Match": "^(?:[^;]*;){{15}}([^;]*);?",
+                            "Datatype": "UInt16"
+                        },
+                        "FolderChild": {
+                            "Name": "TaskControl_{i}",
+                            "Type": "Object",
+                            "Children": [
+                                {
+                                    "Name": "ComponentName",
+                                    "Type": "Property",
+                                    "Value": "Slot_{i}"
+                                },
+                                {
+                                    "Name": "ParameterSet",
+                                    "Type": "Object",
+                                    "Children": [
+                                        {
+                                            "Name": "TaskProgramName",
+                                            "Type": "Value",
+                                            "Datatype": "String",
+                                            "ReadCommand": {
+                                                "Command": "SLOTRD",
+                                                "Match": "^([^;]*);?"
+                                            },
+                                            "Writeable": false
+                                        },
+                                        {
+                                            "Name": "TaskProgramLoaded",
+                                            "Type": "Value",
+                                            "Datatype": "Bool",
+                                            "ReadCommand": {
+                                                "Command": "PRGRD",
+                                                "Match": "" // if match is empty the value is true if anything is returned
+                                            },
+                                            "Writeable": false
+                                        },
+                                        {
+                                            "Name": "ExecutionMode",
+                                            "Type": "EnumValue",
+                                            "Datatype": "Enum",
+                                            "ReadCommand": {
+                                                "Command": "SLOTRD",
+                                                "Match": "^[^;]*;([^;]*);?"
+                                            },
+                                            "Cases": {
+                                                "CYC": {
+                                                    "EnumString": "CYCLE",
+                                                    "Value": 0
+                                                },
+                                                "REP": {
+                                                    "EnumString": "CONTINUOUS",
+                                                    "Value": 1
+                                                },
+                                                "Default": {
+                                                    "EnumString": "CYCLE",
+                                                    "Value": 0
+                                                }
+                                            },
+                                            "Writeable": false
+                                        },
+                                        {
+                                            "Name": "ExecutionCondition",
+                                            "Type": "EnumValue",
+                                            "Datatype": "Enum",
+                                            "ReadCommand": {
+                                                "Command": "SLOTRD",
+                                                "Match": "^(?:[^;]*;){{2}}([^;]*);?"
+                                            },
+                                            "Cases": {
+                                                "START": {
+                                                    "EnumString": "START",
+                                                    "Value": 0
+                                                },
+                                                "ALWAYS": {
+                                                    "EnumString": "ALWAYS",
+                                                    "Value": 1
+                                                },
+                                                "ERROR": {
+                                                    "EnumString": "ERROR",
+                                                    "Value": 2
+                                                },
+                                                "Default": {
+                                                    "EnumString": "START",
+                                                    "Value": 0
+                                                }
+                                            },
+                                            "Writeable": false
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Name": "Software",
+                        "Type": "Folder",
+                        "Count": 1,
+                        "FolderChild": {
+                            "Name": "MainSoftware",
+                            "Type": "Object",
+                            "Children": [
+                                {
+                                    "Name": "Manufacturer",
+                                    "Type": "Property",
+                                    "Value": "Mitsubishi Electric"
+                                },
+                                {
+                                    "Name": "Model",
+                                    "Type": "Property",
+                                    "ReadCommand": {
+                                        "Command": "OPEN=ROBOT",
+                                        "Match": "^(?:[^;]*;){{7}}([^;]*);?"
+                                    },
+                                    "Writeable": false
+                                },
+                                {
+                                    "Name": "SoftwareRevision",
+                                    "Type": "Property",
+                                    "ReadCommand": {
+                                        "Command": "OPEN=ROBOT",
+                                        "Match": "^(?:[^;]*;){{10}}([^;]*);?"
+                                    },
+                                    "Writeable": false
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Name": "CurrentUser",
+                        "Type": "Object",
+                        "Children": [
+                            {
+                                "Name": "Level",
+                                "Type": "Property",
+                                "Value": "User"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "Name": "Inputs",
+            "Type": "Folder",
+            "DisplayType": "Object", // displayed as an object in opc-ua
+            "Count": 4,
+            "FolderChild": {
+                "Name": "Inputs_{first16}_{last16}",
+                "Type": "Value",
+                "Datatype": "HexInt32",
+                "ReadCommand": {
+                    "Command": "IN{i16}",
+                    "Match": "^([^;]*);?"
+                },
+                "Writeable": false
+            }
+        },
+        {
+            "Name": "Outputs",
+            "Type": "Folder",
+            "DisplayType": "Object", // displayed as an object in opc-ua
+            "Count": 4,
+            "FolderChild": {
+                "Name": "Outputs_{first16}_{last16}",
+                "Type": "Value",
+                "Datatype": "HexInt32",
+                "ReadCommand": {
+                    "Command": "OUT{i16}",
+                    "Match": "^([^;]*);?"
+                },
+                "Writeable": true,
+                "WriteCommand": {
+                    "Command": "OUT={i16};{value:04x}"
+                }
+            }
+        },
+        {
+            "Name": "SmartPlus",
+            "Type": "Object",
+            "Children": [
+                {
+                    "Name": "MaintenanceLog",
+                    "Type": "Object",
+                    "Children": [
+                        {
+                            "Name": "MaintenanceLog (grease)",
+                            "Type": "Folder",
+                            "DisplayType": "Object",
+                            "Count": 8,
+                            "FolderChild": {
+                                "Name": "Axis {i}",
+                                "Type": "Value",
+                                "Datatype": "String",
+                                "ReadCommand": {
+                                    "Command": "VALC_PMLogGrs({j},{i})",
+                                    "Match": "^C_PMLogGrs\\(\\d*,\\d*\\)=\"(.*)\""
+                                },
+                                "Count": 10
+                            }
+                        },
+                        {
+                            "Name": "MaintenanceLog (timing belt)",
+                            "Type": "Folder",
+                            "DisplayType": "Object",
+                            "Count": 8,
+                            "FolderChild": {
+                                "Name": "Axis {i}",
+                                "Type": "Value",
+                                "Datatype": "String",
+                                "ReadCommand": {
+                                    "Command": "VALC_PMLogBlt({j},{i})",
+                                    "Match": "^C_PMLogBlt\\(\\d*,\\d*\\)=\"(.*)\""
+                                },
+                                "Count": 10
+                            }
+                        },
+                        {
+                            "Name": "MaintenanceLog (reduction gear)",
+                            "Type": "Folder",
+                            "DisplayType": "Object",
+                            "Count": 8,
+                            "FolderChild": {
+                                "Name": "Axis {i}",
+                                "Type": "Value",
+                                "Datatype": "String",
+                                "ReadCommand": {
+                                    "Command": "VALC_PMLogDec({j},{i})",
+                                    "Match": "^C_PMLogDec\\(\\d*,\\d*\\)=\"(.*)\""
+                                },
+                                "Count": 10
+                            }
+                        },
+                        {
+                            "Name": "MaintenanceLog (bearing)",
+                            "Type": "Folder",
+                            "DisplayType": "Object",
+                            "Count": 8,
+                            "FolderChild": {
+                                "Name": "Axis {i}",
+                                "Type": "Value",
+                                "Datatype": "String",
+                                "ReadCommand": {
+                                    "Command": "VALC_PMLogBrg({j},{i})",
+                                    "Match": "^C_PMLogBrg\\(\\d*,\\d*\\)=\"(.*)\""
+                                },
+                                "Count": 10
+                            }
+                        },
+                        {
+                            "Name": "MaintenanceLog (ball screw/ball spline)",
+                            "Type": "Folder",
+                            "DisplayType": "Object",
+                            "Count": 8,
+                            "FolderChild": {
+                                "Name": "Axis {i}",
+                                "Type": "Value",
+                                "Datatype": "String",
+                                "ReadCommand": {
+                                    "Command": "VALC_PMLogBss({j},{i})",
+                                    "Match": "^C_PMLogBss\\(\\d*,\\d*\\)=\"(.*)\""
+                                },
+                                "Count": 10
+                            }
+                        },
+                        {
+                            "Name": "MaintenanceLog (overhaul (servo ON time))",
+                            "Type": "Value",
+                            "Datatype": "String",
+                            "ReadCommand": {
+                                "Command": "VALC_PMLogOH({j})",
+                                "Match": "^C_PMLogOH\\(\\d*,\\d*\\)=\"(.*)\""
+                            },
+                            "Count": 10
+                        }
+                    ]
+                },
+                {
+                    "Name": "OperatingInformation",
+                    "Type": "Object",
+                    "Children": [
+                        {
+                            "Name": "Power ON Time",
+                            "Type": "Value",
+                            "Datatype": "Int32",
+                            "ReadCommand": {
+                                "Command": "VALM_PowOnTime",
+                                "Match": "^M_PowOnTime=(.*)"
+                            }
+                        },
+                        {
+                            "Name": "Servo ON Time",
+                            "Type": "Value",
+                            "Datatype": "Int32",
+                            "ReadCommand": {
+                                "Command": "VALM_SrvOnTime",
+                                "Match": "^M_SrvOnTime=(.*)"
+                            }
+                        },
+                        {
+                            "Name": "Operation time",
+                            "Type": "Value",
+                            "Datatype": "Int32",
+                            "ReadCommand": {
+                                "Command": "VALM_PrgTime",
+                                "Match": "^M_PrgTime=(.*)"
+                            }
+                        },
+                        {
+                            "Name": "Actual Operation time",
+                            "Type": "Value",
+                            "Datatype": "Int32",
+                            "ReadCommand": {
+                                "Command": "VALM_MovTime",
+                                "Match": "^M_MovTime=(.*)"
+                            }
+                        },
+                        {
+                            "Name": "Servo On Count",
+                            "Type": "Value",
+                            "Datatype": "Int32",
+                            "ReadCommand": {
+                                "Command": "VALM_SrvOnNum",
+                                "Match": "^M_SrvOnNum=(.*)"
+                            }
+                        },
+                        {
+                            "Name": "Motor cumulative rotation count",
+                            "Type": "Value",
+                            "Datatype": "Int32",
+                            "ReadCommand": {
+                                "Command": "VALM_MtRotNum({j})",
+                                "Match": "^M_MtRotNum\\(\\d*,\\d*\\)=(.*)"
+                            },
+                            "Count": 8
+                        }
+                    ]
+                }
+            ],
+            "Condition": {
+                "Command": "VALM_SmartPlus(102);M",
+                "Match": "^M_SmartPlus\\(102\\)=\\+1"
+            }
+        },
+        {
+            "Name": "SafetyStates",
+            "Type": "Folder",
+            "Count": 1,
+            "FolderChild": {
+                "Name": "SafetyState_{i}",
+                "Type": "Object",
+                "Children": [
+                    {
+                        "Name": "ParameterSet",
+                        "Type": "Object",
+                        "Children": [
+                            {
+                                "Name": "OperationalMode",
+                                "Type": "EnumValue",
+                                "Datatype": "Enum",
+                                "ReadCommand": {
+                                    "Command": "VALM_Mode;M",
+                                    "Match": "^M_Mode=\\+(.{{1}})"
+                                },
+                                "Cases": {
+                                    "1": {
+                                        "EnumString": "MANUAL_REDUCED_SPEED",
+                                        "Value": 1
+                                    },
+                                    "2": {
+                                        "EnumString": "AUTOMATIC",
+                                        "Value": 3
+                                    },
+                                    "3": {
+                                        "EnumString": "AUTOMATIC_EXTERNAL",
+                                        "Value": 4
+                                    },
+                                    "Default": {
+                                        "EnumString": "OTHER",
+                                        "Value": 0
+                                    }
+                                },
+                                "Writeable": false
+                            },
+                            {
+                                "Name": "EmergencyStop",
+                                "Type": "Value",
+                                "Datatype": "Bool",
+                                "ReadCommand": {
+                                    "Command": "DSTATE",
+                                    "Match": "^.{{2}}(.{{2}})",
+                                    "Position": 0
+                                },
+                                "Writeable": false
+                            },
+                            {
+                                "Name": "ProtectiveStop",
+                                "Type": "Value",
+                                "Datatype": "Bool",
+                                "ReadCommand": {
+                                    "Command": "DSTATE",
+                                    "Match": "^.{{4}}(.)"
+                                },
+                                "Writeable": false
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

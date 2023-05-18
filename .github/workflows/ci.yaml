@@ -1,0 +1,228 @@
+name: Build, Test and Release
+
+on:
+  push:
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-20.04, windows-latest]
+        include:
+        - os: windows-latest
+          vcpkgCommitId: "6a3dd0874f153f8b375ec26210ea6d41dee3bb26"
+          cmake-configure-ci: win-x64-test
+          cmake-configure-release: win-x64-release
+          cmake-build-preset: windows
+          executable: build/./aerionuaserver.exe
+          executable-name: executable-win
+          executable-path: "build\\aerionuaserver.exe\nbuild\\*.dll\nbuild\\!*d.dll\nbuild\\aerionuaserver-gui.exe"
+          gui-app-name: aerionuaserver-gui.exe
+        - os: ubuntu-20.04
+          vcpkgCommitId: "6a3dd0874f153f8b375ec26210ea6d41dee3bb26"
+          cmake-configure-ci: unix-x64-ci
+          cmake-configure-test: unix-x64-test
+          cmake-configure-release: unix-x64-release
+          cmake-build-preset: unix
+          executable: build/./aerionuaserver
+          executable-name: executable-unix
+          executable-path: "build/aerionuaserver\nbuild/aerionuaserver-gui"
+          gui-app-name: aerionuaserver-gui
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ilammy/msvc-dev-cmd@v1
+      if: matrix.os == 'windows-latest'
+
+    - name: Run vcpkg
+      uses: lukka/run-vcpkg@v10
+      with:
+        vcpkgGitCommitId: "${{matrix.vcpkgCommitId}}"
+
+    - uses: dtolnay/rust-toolchain@stable
+
+    - uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './gui/src-tauri -> target'
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+        cache: 'npm'
+        cache-dependency-path: gui/package-lock.json
+
+    - name: Install dependencies (ubuntu only)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libappindicator3-dev libgtk-3-dev libwebkit2gtk-4.0-dev librsvg2-dev webkit2gtk-driver xvfb valgrind
+      if: matrix.os == 'ubuntu-20.04'
+
+    - name: Build ci with cmake
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: "${{matrix.cmake-configure-ci}}"
+        buildPreset: "${{matrix.cmake-build-preset}}"
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest asyncua asyncio pytest-asyncio psutil
+
+    - name: Create opcua certificates
+      shell: bash
+      run: |
+        mkdir tests/certificates
+        python tests/encryption/create_self-signed.py tests/certificates -c client -u urn:freeopcua:client
+
+    - name: Test with pytest
+      run: |
+        export SERVER_EXECUTABLE=${{matrix.executable}}
+        pytest
+      shell: bash
+
+    - name: Build test with cmake
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: "${{matrix.cmake-configure-test}}"
+        buildPreset: "${{matrix.cmake-build-preset}}"
+      if: matrix.os == 'ubuntu-20.04'
+
+    - name: Build gui application
+      shell: bash
+      run: |
+        version="$(echo -e ${GITHUB_REF#refs/tags/v} | sed 's|-.*$||' | sed 's|^.*/||')"
+        sed -i 's|version-number|${version}|g' gui/src/routes/about/+page.svelte
+        cd gui
+        npm install
+        cargo install tauri-cli
+        cargo tauri build
+        cd ..
+        mv gui/src-tauri/target/release/${{matrix.gui-app-name}} build/${{matrix.gui-app-name}}
+
+    - name: create-resource-file
+      run: |
+        rm -r build
+      if: matrix.os == 'windows-latest'
+
+    - name: Build release with cmake
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: "${{matrix.cmake-configure-release}}"
+        buildPreset: "${{matrix.cmake-build-preset}}"
+
+    - name: Archive executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{matrix.executable-name}}
+        path: ${{matrix.executable-path}}
+
+  create-release:
+    name: Create new release
+    needs: build-and-test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Create empty Changelog and version number
+      run: |
+        echo -e "## What's New\n...\n## What's Changed\n..." >> CHANGELOG.md
+        export version="$(echo -e ${GITHUB_REF#refs/tags/v} | sed s/-.*$//)"
+        echo "VERSION_NUMBER=${version}" >> $GITHUB_ENV
+
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: "CHANGELOG.md"
+        token: ${{ secrets.GITHUB_TOKEN }}
+        name: "Aerion OPC-UA Server ${{ env.VERSION_NUMBER }}"
+
+  create-installer:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-latest]
+        include:
+        - os: windows-latest
+          vc_2022_path: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
+          executable: executable-win
+        - os: ubuntu-20.04
+          executable: executable-unix
+
+    needs: create-release
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download executable
+      uses: actions/download-artifact@master
+      with:
+        name: ${{matrix.executable}}
+        path: bin
+
+    - name: Create version number and package name
+      shell: bash
+      run: |
+        version="$(echo -e ${GITHUB_REF#refs/tags/v} | sed s/-.*$//)"
+        echo "VERSION_NUMBER=${version}" >> $GITHUB_ENV
+        echo "PACKAGE_NAME=aerionuaserver_${version}_linux_amd64" >> $GITHUB_ENV
+
+    - name: Setup MSBuild
+      id: setupmsbuild
+      uses: microsoft/setup-msbuild@v1.3.1
+      if: matrix.os == 'windows-latest'
+
+    - name: Build MSI
+      id: buildmsi
+      shell: bash
+      env:
+        MSBUILD_PATH: ${{ steps.setupmsbuild.outputs.msbuildPath }}
+      if: matrix.os == 'windows-latest'
+      run: |
+        cp "${{ matrix.vc_2022_path }}\VC\Redist\MSVC\v143\MergeModules\Microsoft_VC143_CRT_x64.msm" bin
+        "${MSBUILD_PATH}\MSBuild.exe" ./builds/windows/aerionuaserver.wixproj -p:SourceDir="$PWD" -p:OutputPath="$PWD" -p:OutputName="aerionuaserver" -p:ProductVersion="${{ env.VERSION_NUMBER }}"
+
+    - name: Build deb
+      if: matrix.os == 'ubuntu-20.04'
+      run: |
+        mkdir -p ${{ env.PACKAGE_NAME }}/usr/local/bin
+        mkdir -p ${{ env.PACKAGE_NAME }}/etc/aerionuaserver
+        mkdir -p ${{ env.PACKAGE_NAME }}/DEBIAN
+        sudo chmod +x bin/aerionuaserver
+        cp bin/aerionuaserver ${{ env.PACKAGE_NAME }}/usr/local/bin
+        cp bin/aerionuaserver-gui ${{ env.PACKAGE_NAME }}/usr/local/bin
+        cp resources/icon.png ${{ env.PACKAGE_NAME }}/usr/local/bin
+        cp specifications -r ${{ env.PACKAGE_NAME }}/etc/aerionuaserver
+        cp builds/unix/control ${{ env.PACKAGE_NAME }}/DEBIAN
+        sed -i 's/version-number/${{ env.VERSION_NUMBER }}/g' ${{ env.PACKAGE_NAME }}/DEBIAN/control
+        dpkg-deb --root-owner-group --build ${{ env.PACKAGE_NAME }}
+
+    - name: Upload MSI
+      uses: svenstaro/upload-release-action@v2
+      if: matrix.os == 'windows-latest'
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ env.MSI_FILE }}
+        asset_name: aerionuaserver_${{ env.VERSION_NUMBER }}_windows_amd64.msi
+        tag: ${{ github.ref }}
+      env:
+        MSI_FILE: ${{ steps.buildmsi.outputs.msi }}
+
+    - name: Upload deb
+      uses: svenstaro/upload-release-action@v2
+      if: matrix.os == 'ubuntu-20.04'
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ env.PACKAGE_NAME }}.deb
+        asset_name: ${{ env.PACKAGE_NAME }}.deb
+        tag: ${{ github.ref }}

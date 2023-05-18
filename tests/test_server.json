@@ -1,0 +1,6 @@
+{
+    "SecurityPolicies": [ "None", "Basic128Rsa15", "Basic256", "Aes128Sha256RsaOaep" ],
+    "SecurityModes": [ "Sign", "Sign & Encrypt" ],
+    "EnforceClientCertificateVerification": false,
+    "Port": 5001
+}

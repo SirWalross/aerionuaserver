@@ -1,0 +1,18 @@
+{
+    "name": "versions-test",
+    "version": "1.0.0",
+    "dependencies": [
+        {
+            "name": "open62541",
+            "version>=": "1.3.5"
+        },
+        "fmt",
+        "nlohmann-json",
+        "re2",
+        "tcb-span",
+        "reproc",
+        "cppzmq",
+        "efsw"
+    ],
+    "builtin-baseline": "253704407ae68efa37bf8f5b59b3e06dd40d3d3f"
+}

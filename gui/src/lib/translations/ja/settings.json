@@ -1,0 +1,17 @@
+{
+    "settings": "設定",
+    "opcua port": "OPC-UAサーバー用ポート",
+    "apply": "適用する",
+    "restart server": "OPC-UAサーバーを再起動すると、変更が適用されます！",
+    "security policies": "Security Policies",
+    "select at least one security policy": "Security Policyを1つ以上選択する。",
+    "security modes": "セキュリティモード",
+    "mode select at least one encrypted security policy": "Sign または Sign & Encrypt を使用する暗号化された Security Policy を少なくとも 1 つ選択する。",
+    "verification select at least one encrypted security policy": "クライアント証明書の検証を使用する暗号化されたSecurity Policyを少なくとも1つ選択する。",
+    "client certificate verification": "クライアント証明書の検証",
+    "enforce": "検証の実施",
+    "place certificates in folder": {
+        "prefix": "クライアント証明書を ",
+        "suffix": " フォルダーに置き、証明書を信頼させ、サーバーを再起動します。"
+    }
+}

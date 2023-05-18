@@ -1,0 +1,13 @@
+[Robot]
+type = "robot"
+ip = "192.168.0.20"
+port = 10001
+
+[R04CPU]
+type = "plc"
+ip = "192.168.3.39"
+port = 5006
+network_no = 0
+station_no = 255
+module_io = 1023
+multidrop_station_no = 0

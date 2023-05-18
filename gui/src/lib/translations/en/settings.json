@@ -1,0 +1,17 @@
+{
+    "settings": "Settings",
+    "opcua port": "Port for OPC-UA server",
+    "apply": "Apply",
+    "restart server": "Restart OPC-UA server to apply the changes!",
+    "security policies": "Security Policies",
+    "select at least one security policy": "Select at least one Security Policy",
+    "security modes": "Security Modes",
+    "mode select at least one encrypted security policy": "Select at least one encrypted Security Policy to use Sign or Sign & Encrypt",
+    "verification select at least one encrypted security policy": "Select at least one encrypted Security Policy to use client certificate verification",
+    "client certificate verification": "Client certificate verification",
+    "enforce": "Enforce verification",
+    "place certificates in folder": {
+        "prefix": "Place client certificate(s) in the ",
+        "suffix": " folder to trust the certificate and restart the server"
+    }
+}

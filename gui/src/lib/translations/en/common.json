@@ -1,0 +1,14 @@
+{
+    "home": "Home",
+    "devices": "Devices",
+    "logs": "Logs",
+    "interfaces": "Interfaces",
+    "settings": "Settings",
+    "about": "About",
+    "light mode": "Light mode",
+    "dark mode": "Dark mode",
+    "server running": "Server running",
+    "server not running": "Server not running",
+    "languages": "Languages",
+    "set port": "Set port"
+}

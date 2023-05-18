@@ -1,0 +1,13 @@
+{
+    "home": "ホーム",
+    "devices": "デバイス",
+    "logs": "過去ログ",
+    "interfaces": "インターフェース",
+    "settings": "設定",
+    "about": "について",
+    "light mode": "ライトモード",
+    "dark mode": "ダークモード",
+    "server running": "サーバー稼働中",
+    "server not running": "サーバーが動作していない",
+    "languages": "言語"
+}

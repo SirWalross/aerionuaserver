@@ -1,0 +1,142 @@
+﻿{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "windows-base",
+            "description": "Target Windows with the Visual Studio development environment.",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_TOOLCHAIN_FILE": {
+                    "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                    "type": "FILEPATH"
+                }
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "unix-base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": {
+                    "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                    "type": "FILEPATH"
+                },
+                "CMAKE_CXX_COMPILER": "g++"
+            },
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "win-x64-debug",
+            "displayName": "x64 Debug",
+            "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+            "inherits": "windows-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "/UTEST"
+            }
+        },
+        {
+            "name": "win-x64-release",
+            "displayName": "x64 Release",
+            "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
+            "inherits": "win-x64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS": "/UTEST"
+            }
+        },
+        {
+            "name": "win-x64-test",
+            "displayName": "x64 Test",
+            "description": "Target Windows (64-bit). (Debug)",
+            "inherits": "windows-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "/DTEST /fsanitize=address /MTd"
+            }
+        },
+        {
+            "name": "unix-x64-debug",
+            "displayName": "x64 Debug",
+            "description": "Target Unix (64-bit). (Debug)",
+            "inherits": "unix-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "-UTEST"
+            }
+        },
+        {
+            "name": "unix-x64-release",
+            "displayName": "x64 Release",
+            "description": "Target Unix (64-bit). (RelWithDebInfo)",
+            "inherits": "unix-x64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS": "-UTEST"
+            }
+        },
+        {
+            "name": "unix-x64-ci",
+            "displayName": "x64 CI",
+            "description": "Target Unix (64-bit). (RelWithDebInfo)",
+            "inherits": "unix-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Sanitize",
+                "CMAKE_CXX_FLAGS_SANITIZE": "-O2 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-common -DTEST"
+            }
+        },
+        {
+            "name": "unix-x64-test",
+            "displayName": "x64 Test",
+            "description": "Target Unix (64-bit). (Debug)",
+            "inherits": "unix-base",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_FLAGS": "-DTEST"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "unix",
+            "configurePreset": "unix-x64-release"
+        },
+        {
+            "name": "windows",
+            "configurePreset": "win-x64-release"
+        }
+    ]
+}

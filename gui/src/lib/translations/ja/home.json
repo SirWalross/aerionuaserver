@@ -1,0 +1,11 @@
+{
+    "server not running": "OPC-UAサーバーが起動していない",
+    "server running": {
+        "prefix": "",
+        "suffix": " で動作するOPC-UAサーバー。"
+    },
+    "connected": {
+        "prefix": "",
+        "suffix": "台のデバイスに接続"
+    }
+}

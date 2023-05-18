@@ -1,0 +1,11 @@
+{
+    "server not running": "OPC-UA Server not running",
+    "server running": {
+        "prefix": "OPC-UA Server running at ",
+        "suffix": ""
+    },
+    "connected": {
+        "prefix": "Connected to ",
+        "suffix": " devices"
+    }
+}

@@ -1,0 +1,299 @@
+{
+    "Clients": [
+        {
+            "Name": "R04CPU",
+            "Type": "PLC",
+            "Ip": "127.0.0.1",
+            "Port": 5007,
+            "Destination network No.": 0, // 0x00,
+            "Destination station No.": 255, // 0xFF,
+            "Destination Module I/O": 1023, // 0x03FF
+            "Destination multidrop station No.": 0, // 0x00
+            "UserNodes": [
+                {
+                    "Name": "bLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "Bool",
+                    "ReadCommand": {
+                        "Label": "bLabel"
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "bArrayLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "Bool",
+                    "ReadCommand": {
+                        "Label": "bArrayLabel"
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "eLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "Double",
+                    "ReadCommand": {
+                        "Label": "eLabel"
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "sLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "String",
+                    "ReadCommand": {
+                        "Label": "sLabel"
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "sArrayLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "String",
+                    "ReadCommand": {
+                        "Label": "sArrayLabel"
+                    },
+                    "Count": 3
+                },
+                {
+                    "Name": "uLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "Word",
+                    "ReadCommand": {
+                        "Label": "uLabel"
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "wdLabel",
+                    "Parent": "Global Label",
+                    "Type": "GlobalLabel",
+                    "Datatype": "DInt",
+                    "ReadCommand": {
+                        "Label": "wdLabel"
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "M-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Word",
+                    "ReadCommand": {
+                        "Device": "M",
+                        "Head no": 96
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "M-Bool-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Bool",
+                    "ReadCommand": {
+                        "Device": "M",
+                        "Head no": 165
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "M-Bool-Array-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Bool",
+                    "ReadCommand": {
+                        "Device": "M",
+                        "Head no": 195
+                    },
+                    "Count": 5
+                },
+                {
+                    "Name": "M-Bool-Long-Array-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Bool",
+                    "ReadCommand": {
+                        "Device": "M",
+                        "Head no": 232
+                    },
+                    "Count": 20
+                },
+                {
+                    "Name": "D-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Word",
+                    "ReadCommand": {
+                        "Device": "D",
+                        "Head no": 100
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "D-Bool-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Bool",
+                    "ReadCommand": {
+                        "Device": "D",
+                        "Head no": 101
+                    },
+                    "Count": 16
+                },
+                {
+                    "Name": "D-Double-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Double",
+                    "ReadCommand": {
+                        "Device": "D",
+                        "Head no": 102
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "D-DInt-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "DInt",
+                    "ReadCommand": {
+                        "Device": "D",
+                        "Head no": 106
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "D-Double-Array-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Double",
+                    "ReadCommand": {
+                        "Device": "D",
+                        "Head no": 108
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "D-String-Array-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "String",
+                    "ReadCommand": {
+                        "Device": "D",
+                        "Head no": 124,
+                        "Length": 4
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "U3E0-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Word",
+                    "ReadCommand": {
+                        "Device": "U3E0",
+                        "Head no": 100
+                    },
+                    "Writeable": true
+                },
+                {
+                    "Name": "U3E3-Int-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Int",
+                    "ReadCommand": {
+                        "Device": "U3E3",
+                        "Head no": 101
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "G-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Int",
+                    "ReadCommand": {
+                        "Device": "U0A",
+                        "Head no": 100
+                    },
+                    "Count": 4
+                },
+                {
+                    "Name": "G-Float-Device",
+                    "Parent": "Global Variables",
+                    "Type": "Device",
+                    "Datatype": "Float",
+                    "ReadCommand": {
+                        "Device": "U0F",
+                        "Head no": 100
+                    },
+                    "Writeable": true
+                }
+            ]
+        },
+        {
+            "Name": "Robot1",
+            "Type": "Robot",
+            "Ip": "127.0.0.1",
+            "Port": 10001,
+            "UserNodes": [
+                {
+                    "Name": "Current Position",
+                    "Parent": "Variables",
+                    "Datatype": "Position",
+                    "ReadCommand": {
+                        "Command": "VALP_Curr",
+                        "Match": "^P_Curr=(.*)"
+                    }
+                },
+                {
+                    "Name": "Safe Position",
+                    "Parent": "MotionDevices/MotionDevice_1/ParameterSet",
+                    "Datatype": "Position",
+                    "ReadCommand": {
+                        "Command": "VALP_Safe(1)",
+                        "Match": "^P_Safe\\(1\\)=(.*)"
+                    }
+                },
+                {
+                    "Name": "LocalVariable",
+                    "Parent": "Variables",
+                    "Datatype": "Int32",
+                    "ReadCommand": {
+                        "Command": "1;3;VALM1",
+                        "Match": "^M1=(.*)"
+                    }
+                },
+                {
+                    "Name": "Outputs_64_79",
+                    "Parent": "Outputs",
+                    "Datatype": "HexInt32",
+                    "ReadCommand": {
+                        "Command": "OUT64",
+                        "Match": "^([^;]*);?"
+                    },
+                    "Writeable": true,
+                    "WriteCommand": {
+                        "Command": "OUT=64;{value:04x}"
+                    }
+                },
+                {
+                    "Name": "Encoder Values",
+                    "Parent": "Variables",
+                    "Datatype": "Int32",
+                    "ReadCommand": {
+                        "Command": "VALM_Enc({j})",
+                        "Match": "^M_Enc\\(\\d*\\)=(.*)"
+                    },
+                    "Count": 8
+                }
+            ]
+        }
+    ]
+}

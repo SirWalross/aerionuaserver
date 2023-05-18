@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/gui"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "cargo"
+    directory: "/gui/src-tauri"
+    schedule:
+      interval: "daily"

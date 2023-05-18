@@ -1,0 +1,32 @@
+{
+    "Nodes": [
+        {
+            "Name": "Production Information",
+            "Type": "Property",
+            "Datatype": "String",
+            "ReadCommand": {
+                "Device": "SD",
+                "Head no": 164,
+                "Length": 16
+            }
+        },
+        {
+            "Name": "Operating Status",
+            "Type": "Device",
+            "Datatype": "Int",
+            "ReadCommand": {
+                "Device": "SD",
+                "Head no": 203
+            }
+        },
+        {
+            "Name": "Firmware Version",
+            "Type": "Device",
+            "Datatype": "Word",
+            "ReadCommand": {
+                "Device": "SD",
+                "Head no": 160
+            }
+        }
+    ]
+}
