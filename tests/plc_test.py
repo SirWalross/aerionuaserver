@@ -33,7 +33,7 @@ def server():
     # start the server
     server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]])
 
-    time.sleep(2)  # let the server start
+    time.sleep(5) # let the server start
 
     yield
 
@@ -50,7 +50,10 @@ def server():
         server.wait()
 
     # shutdown client
-    client.send_signal(signal.SIGINT)
+    if sys.platform == "win32":
+        client.send_signal(signal.CTRL_C_EVENT)
+    else:
+        client.send_signal(signal.SIGINT)
     try:
         client.wait(1)
     except subprocess.TimeoutExpired:

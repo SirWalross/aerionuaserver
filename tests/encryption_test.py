@@ -54,7 +54,7 @@ def server(request):
 
     server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]])
 
-    time.sleep(2)  # let server start
+    time.sleep(5) # let the server start
 
     yield
 

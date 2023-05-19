@@ -7,7 +7,7 @@
 <br/>
 <br/>
 
-# Aerion - a OPC-UA Server for MELFA Robots and PLCs
+# Aerion - a OPC-UA Server for MELFA Robots and MELSEC PLCs
 
 <br/>
 
@@ -46,9 +46,9 @@
 
 <!---------------------------------[ Badges ]---------------------------------->
 
-[Badge Tests]: https://img.shields.io/badge/tests-passing-brightgreen?style=for-the-badge&labelColor=gray&logoColor=white&logo=GITHUB
-[Badge License]: https://img.shields.io/badge/License-MIT-336887.svg?style=for-the-badge&labelColor=458cb5
-[Badge Latest Release]: https://img.shields.io/badge/Latest%20Release-v0.1.0-336887.svg?style=for-the-badge&labelColor=bb9f3e&color=937d31
+[Badge License]: https://img.shields.io/github/license/SirWalross/aerionuaserver?color=336887&style=for-the-badge&labelColor=458cb5
+[Badge Tests]: https://img.shields.io/github/actions/workflow/status/SirWalross/aerionuaserver/ci.yaml?branch=main&style=for-the-badge&labelColor=gray&logoColor=white&logo=GITHUB
+[Badge Latest Release]: https://img.shields.io/github/v/release/SirWalross/aerionuaserver?label=Latest%20Release&style=for-the-badge&labelColor=bb9f3e&color=937d31
 
 <!---------------------------------[ Buttons ]--------------------------------->
 
