@@ -86,11 +86,11 @@ def server(request):
 )
 async def test_encryption_with_none(server) -> None:
     # test connecting without encryption
-    async with Client(url=url) as client:
+    async with Client(url=url, timeout=10) as client:
         await client.get_namespace_index(namespace)
 
     # test connection endpoints
-    async with Client(url=url) as client:
+    async with Client(url=url, timeout=10) as client:
         connection_endpoints = await client.get_endpoints()
         for connection_endpoint in connection_endpoints:
             assert [
@@ -139,7 +139,7 @@ async def test_encryption_without_none(server) -> None:
 
     # test connecting without encryption (should fail)
     with pytest.raises(ua.uatypes.UaStatusCodeError) as exc_info:
-        async with Client(url=url) as client:
+        async with Client(url=url, timeout=10) as client:
             await client.get_namespace_index(namespace)
 
     assert exc_info.value.code == ua.uatypes.status_codes.StatusCodes.BadSecurityPolicyRejected

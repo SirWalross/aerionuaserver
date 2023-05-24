@@ -71,7 +71,7 @@ def server():
 
 @pytest.mark.asyncio
 async def test_filewatching() -> None:
-    async with Client(url=url) as client:
+    async with Client(url=url, timeout=10) as client:
         nsidx = await client.get_namespace_index(namespace)
         plc = await client.nodes.objects.get_child(f"{nsidx}:R04CPU")
         assert await (await plc.get_child(f"{nsidx}:Production Information")).get_value() == plc_mock.PRODUCTION_INFORMATION

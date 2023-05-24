@@ -63,7 +63,7 @@ def server():
 
 @pytest.fixture()
 async def plc_node() -> AsyncGenerator[Tuple[Node, int], None]:
-    async with Client(url=url) as client:
+    async with Client(url=url, timeout=10) as client:
         nsidx = await client.get_namespace_index(namespace)
         yield (await client.nodes.objects.get_child(f"{nsidx}:R04CPU")), nsidx
 
