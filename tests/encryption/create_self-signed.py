@@ -14,13 +14,24 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("outdir", type=str, nargs="?", default=os.getcwd(), metavar="<OutputDirectory>")
+parser.add_argument(
+    "outdir", type=str, nargs="?", default=os.getcwd(), metavar="<OutputDirectory>"
+)
 
-parser.add_argument("-u", "--uri", metavar="<ApplicationUri>", type=str, default="", dest="uri")
+parser.add_argument(
+    "-u", "--uri", metavar="<ApplicationUri>", type=str, default="", dest="uri"
+)
 
 parser.add_argument("-k", "--keysize", metavar="<KeySize>", type=int, dest="keysize")
 
-parser.add_argument("-c", "--certificatename", metavar="<CertificateName>", type=str, default="", dest="certificatename")
+parser.add_argument(
+    "-c",
+    "--certificatename",
+    metavar="<CertificateName>",
+    type=str,
+    default="",
+    dest="certificatename",
+)
 
 args = parser.parse_args()
 
@@ -48,12 +59,18 @@ certsdir = os.path.dirname(os.path.abspath(__file__))
 
 # All network interfaces
 allNetworkInterfaces = {
-    name: next((address for address in addresses if address.family == socket.AF_INET), None)
+    name: next(
+        (address for address in addresses if address.family == socket.AF_INET), None
+    )
     for name, addresses in psutil.net_if_addrs().items()
 }
 
 # Network interfaces excluding loopback interfaces and interfaces without an AF_INET address
-networkInterfaces = {name: address for name, address in allNetworkInterfaces.items() if address is not None and name != "lo"}
+networkInterfaces = {
+    name: address
+    for name, address in allNetworkInterfaces.items()
+    if address is not None and name != "lo"
+}
 
 # Traverse through the available network interfaces and store the
 # corresponding IP addresses of the network interface in a variable
@@ -83,8 +100,13 @@ os.system(
         openssl_conf, keysize
     )
 )
-os.system("openssl x509 -in localhost.crt -outform der -out %s_cert.der" % (certificatename))
-os.system("openssl rsa -inform PEM -in localhost.key -outform DER -out %s_key.der" % (certificatename))
+os.system(
+    "openssl x509 -in localhost.crt -outform der -out %s_cert.der" % (certificatename)
+)
+os.system(
+    "openssl rsa -inform PEM -in localhost.key -outform DER -out %s_key.der"
+    % (certificatename)
+)
 
 os.remove("localhost.key")
 os.remove("localhost.crt")

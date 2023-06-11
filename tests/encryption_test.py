@@ -52,9 +52,11 @@ def server(request):
         # create empty trustlist
         os.makedirs("tests/server/trusted")
 
-    server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]])
+    server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]], stderr=subprocess.PIPE)
 
-    time.sleep(5) # let the server start
+    for line in server.stderr:
+        if b"TCP network layer listening on" in line:
+            break
 
     yield
 
