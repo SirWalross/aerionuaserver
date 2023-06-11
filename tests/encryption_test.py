@@ -57,6 +57,8 @@ def server(request):
     for line in server.stderr:
         if b"TCP network layer listening on" in line:
             break
+        
+    time.sleep(1)
 
     yield
 
@@ -67,7 +69,7 @@ def server(request):
 
     try:
         server.wait(1)
-    except subprocess.TimeoutExpired as _:
+    except subprocess.TimeoutExpired:
         server.terminate()
         server.wait()
 
@@ -198,7 +200,7 @@ async def test_client_certificate_verification(server) -> None:
         mode=ua.MessageSecurityMode.SignAndEncrypt,
     )
     # TODO: better check if BadCertificateUntrusted is really the issue
-    with pytest.raises(asyncio.TimeoutError) as _:
+    with pytest.raises(asyncio.TimeoutError):
         async with client:
             await client.get_namespace_index(namespace)
 

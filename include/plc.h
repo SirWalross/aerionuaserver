@@ -357,4 +357,5 @@ inline void create_plc_node(PLC* plc, UA_Server* server, const char* client_file
             }
         }
     }
+    UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_USERLAND, "Created plc node");
 }

@@ -32,7 +32,7 @@ def server():
     server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]], stderr=subprocess.PIPE)
 
     for line in server.stderr:
-        if b"TCP network layer listening on" in line:
+        if b"Created robot node" in line:
             break
 
     yield
@@ -45,7 +45,7 @@ def server():
 
     try:
         server.wait(1)
-    except subprocess.TimeoutExpired as _:
+    except subprocess.TimeoutExpired:
         server.terminate()
         server.wait()
 
@@ -56,7 +56,7 @@ def server():
         client.send_signal(signal.SIGINT)
     try:
         client.wait(1)
-    except subprocess.TimeoutExpired as _:
+    except subprocess.TimeoutExpired:
         client.terminate()
         client.wait()
 
@@ -156,9 +156,7 @@ async def test_motion_devices(robot_node: AsyncGenerator[Tuple[Node, int], None]
             ("ARTICULATED_ROBOT" if robot_mock.ROBOT_TYPE.lower().startswith("rv") else "SCARA_ROBOT") if i == 0 else "OTHER"
         )
 
-        assert (
-            await (await motion_device.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:SpeedOverride"])).get_value() == robot_mock.ROBOT_OVRD
-        )
+        assert await (await motion_device.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:SpeedOverride"])).get_value() == robot_mock.ROBOT_OVRD
         assert await (await motion_device.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:InControl"])).get_value() == robot_mock.ROBOT_M_SVO
 
         assert len(await (await motion_device.get_child(f"{nsidx}:Axes")).get_children()) == len(robot_mock.ROBOT_JPOS[i])
@@ -172,20 +170,14 @@ async def test_motion_devices(robot_node: AsyncGenerator[Tuple[Node, int], None]
         for j, _ in enumerate(robot_mock.ROBOT_JPOS):
             joint = await motion_device.get_child([f"{nsidx}:Axes", f"{nsidx}:Axis_J{j+1}"])
             assert (
-                await (await joint.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:ActualPosition"])).get_value()
-                == robot_mock.ROBOT_JPOS[i][j]
+                await (await joint.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:ActualPosition"])).get_value() == robot_mock.ROBOT_JPOS[i][j]
             )
-            assert (
-                await (await joint.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:ActualSpeed"])).get_value()
-                == robot_mock.ROBOT_SRVSPD[i][j]
-            )
+            assert await (await joint.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:ActualSpeed"])).get_value() == robot_mock.ROBOT_SRVSPD[i][j]
 
         assert len(await (await motion_device.get_child(f"{nsidx}:PowerTrains")).get_children()) == len(robot_mock.ROBOT_JPOS[i])
 
         for j, _ in enumerate(robot_mock.ROBOT_ETEMP):
-            motor_identifier = await motion_device.get_child(
-                [f"{nsidx}:PowerTrains", f"{nsidx}:PowerTrain_{j+1}", f"{nsidx}:MotorIdentifier"]
-            )
+            motor_identifier = await motion_device.get_child([f"{nsidx}:PowerTrains", f"{nsidx}:PowerTrain_{j+1}", f"{nsidx}:MotorIdentifier"])
             assert (
                 await (await motor_identifier.get_child([f"{nsidx}:ParameterSet", f"{nsidx}:MotorTemperature"])).get_value()
                 == robot_mock.ROBOT_ETEMP[i][j]
@@ -198,11 +190,7 @@ async def test_motion_devices(robot_node: AsyncGenerator[Tuple[Node, int], None]
         if i == 0:
             additional_components = await (await motion_device.get_child(f"{nsidx}:AdditionalComponents")).get_children()
             assert len(additional_components) == len(
-                [
-                    additional_component
-                    for additional_component in robot_mock.ROBOT_ADDITIONAL_COMPONENTS
-                    if (additional_component is not None)
-                ]
+                [additional_component for additional_component in robot_mock.ROBOT_ADDITIONAL_COMPONENTS if (additional_component is not None)]
             )
 
             additional_component = await motion_device.get_child([f"{nsidx}:AdditionalComponents", f"{nsidx}:Slot_1"])

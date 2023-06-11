@@ -34,7 +34,7 @@ def server():
     server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]], stderr=subprocess.PIPE)
 
     for line in server.stderr:
-        if b"TCP network layer listening on" in line:
+        if b"Created plc node" in line:
             break
 
     yield

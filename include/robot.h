@@ -479,4 +479,5 @@ inline void create_robot_node(Robot* robot, UA_Server* server, const char* clien
             }
         }
     }
+    UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_USERLAND, "Created robot node");
 }

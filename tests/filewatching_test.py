@@ -40,10 +40,14 @@ def server():
     # start the server
     server = subprocess.Popen([os.environ["SERVER_EXECUTABLE"]], stderr=subprocess.PIPE)
 
+    # wait till server restarts
+    started = 0
     for line in server.stderr:
-        if b"TCP network layer listening on" in line:
+        if b"Created plc node" in line or b"Created robot node" in line:
+            started += 1
+        if started == 2:
             break
-
+    
     yield
 
     # shutdown server
@@ -54,7 +58,7 @@ def server():
 
     try:
         server.wait(1)
-    except subprocess.TimeoutExpired as _:
+    except subprocess.TimeoutExpired:
         server.terminate()
         server.wait()
 
@@ -66,7 +70,7 @@ def server():
             client.send_signal(signal.SIGINT)
         try:
             client.wait(1)
-        except subprocess.TimeoutExpired as _:
+        except subprocess.TimeoutExpired:
             client.terminate()
             client.wait()
 
