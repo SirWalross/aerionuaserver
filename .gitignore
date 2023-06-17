@@ -17,3 +17,5 @@ server/**
 certificates
 tests/server
 .env
+.vitepress
+node_modules

@@ -83,20 +83,22 @@ def main() -> None:
 
             while True:
                 message = conn.recv(1024).decode("latin-1")
-                try:
-                    answer = [
-                        f"QoK{value}"
-                        for key, value in answers.items()
-                        if message.lower().startswith(key.lower()) or ";".join(message.split(";")[2:]).lower().startswith(key.lower())
-                    ][0]
-                    if message.startswith("1;1;OUT="):
-                        answers.update({f"OUT{message.split('=')[1].split(';')[0]}": message.split(";")[3]})
+                if message != "":
+                    try:
+                        answer = [
+                            f"QoK{value}"
+                            for key, value in answers.items()
+                            if message.lower().startswith(key.lower()) or ";".join(message.split(";")[2:]).lower().startswith(key.lower())
+                        ][0]
+                        if message.startswith("1;1;OUT="):
+                            answers.update({f"OUT{message.split('=')[1].split(';')[0]}": message.split(";")[3]})
 
-                    print(f"{message} -> {answer}")
-                    conn.sendto(answer.encode("latin-1"), addr)
-                except IndexError:
-                    print(f"Invalid message: {message}")
-                    conn.sendto(b"QeR", addr)
+                        conn.sendto(answer.encode("latin-1"), addr)
+                    except IndexError:
+                        print(f"Invalid message: {message}")
+                        conn.sendto(b"QeR", addr)
+                else:
+                    raise ConnectionError()
         except BrokenPipeError:
             print(traceback.format_exc())
         except ConnectionError:

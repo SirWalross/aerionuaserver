@@ -58,7 +58,7 @@ def server(request):
         if b"TCP network layer listening on" in line:
             break
         
-    time.sleep(1)
+    time.sleep(3)
 
     yield
 
