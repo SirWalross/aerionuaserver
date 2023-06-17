@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
     title: "Aerionuaserver",
     description: "Aerion - a OPC-UA Server for MELFA Robots and MELSEC PLCs",
-    base: '/',
+    base: '/aerionuaserver/',
     lastUpdated: true,
     themeConfig: {
         // https://vitepress.dev/reference/default-theme-config
