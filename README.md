@@ -2,7 +2,7 @@
 
 [![Badge License]](https://github.com/SirWalross/aerionuaserver/blob/main/LICENSE) [![Badge Tests]](https://github.com/SirWalross/aerionuaserver/actions) [![Badge Latest Release]](https://github.com/SirWalross/aerionuaserver/releases/latest)
 
-[![Button Building]](https://github.com/SirWalross/aerionuaserver/blob/main/BuildingFromSource.md) [![Button Robot User Nodes]](https://github.com/SirWalross/aerionuaserver/blob/main/RobotUserNodeFormat.md) [![Button PLC User Nodes]](https://github.com/SirWalross/aerionuaserver/blob/main/PLCUserNodeFormat.md)
+[![Button Documentation]](https://sirwalross.github.io/aerionuaserver) [![Button Robot User Nodes]](https://github.com/SirWalross/aerionuaserver/blob/main/RobotUserNodeFormat.md) [![Button PLC User Nodes]](https://github.com/SirWalross/aerionuaserver/blob/main/PLCUserNodeFormat.md)
 
 <br/>
 <br/>
@@ -35,6 +35,7 @@
 ## Features
 - Support for OPC-UA Encryption with the `Basic256Sha256` and `Aes128Sha256RsaOaep` encryption algorithms supported
 - Enforcement of client certificate verification supported
+- GUI for configuring the OPC-UA server and connect to new Robots and PLCs
 
 ## Installation on Windows
 - Download and install the `.msi` file from the [latest release](https://github.com/SirWalross/aerionuaserver/releases/latest)
@@ -52,6 +53,6 @@
 
 <!---------------------------------[ Buttons ]--------------------------------->
 
-[Button Building]: https://img.shields.io/badge/Building_from_source-blue?style=for-the-badge&logoColor=white&logo=GitBook
+[Button Documentation]: https://img.shields.io/badge/Documentation-blue?style=for-the-badge&logoColor=white&logo=GitBook
 [Button Robot User Nodes]: https://img.shields.io/badge/Robot_User_Node_Format-569A31?style=for-the-badge&logoColor=white&logo=ROS
 [Button PLC User Nodes]: https://img.shields.io/badge/PLC_User_Node_Format-e2467d?style=for-the-badge&logoColor=white&logo=ROS
