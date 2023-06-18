@@ -108,7 +108,7 @@ async def test_encryption_with_none(server) -> None:
         SecurityPolicyAes128Sha256RsaOaep,
         client_certificate,
         private_key,
-        mode=ua.MessageSecurityMode.SignAndEncrypt,
+        mode=ua.MessageSecurityMode.Sign,
     )
     async with client:
         await client.get_namespace_index(namespace)
@@ -119,7 +119,7 @@ async def test_encryption_with_none(server) -> None:
         SecurityPolicyAes128Sha256RsaOaep,
         client_certificate,
         private_key,
-        mode=ua.MessageSecurityMode.Sign,
+        mode=ua.MessageSecurityMode.SignAndEncrypt,
     )
     async with client:
         await client.get_namespace_index(namespace)

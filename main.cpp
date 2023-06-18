@@ -198,6 +198,7 @@ class Clients : public efsw::FileWatchListener {
             while (running && !restart_clients) {
                 robot->r3.connect();
                 if (robot->r3.connected) {
+                    std::cout << "Hallo from " << robot->name << "\n";
                     create_robot_node(robot, server, client_file.c_str());
 
                     send_update_to_gui(robot->name, true);
@@ -219,6 +220,12 @@ class Clients : public efsw::FileWatchListener {
         } catch (const std::exception& e) {
             UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_CLIENT, "running device '%s' threw exception %s",
                         robot->name.c_str(), e.what());
+        } catch (const std::string& e) {
+            UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_CLIENT, "running device '%s' threw exception %s",
+                        robot->name.c_str(), e.c_str());
+        } catch (...) {
+            UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_CLIENT, "running device '%s' threw exception",
+                        robot->name.c_str());
         }
     }
 
@@ -248,6 +255,11 @@ class Clients : public efsw::FileWatchListener {
         } catch (const std::exception& e) {
             UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_CLIENT, "running device '%s' threw exception %s",
                         plc->name.c_str(), e.what());
+        } catch (const std::string& e) {
+            UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_CLIENT, "running device '%s' threw exception %s",
+                        plc->name.c_str(), e.c_str());
+        } catch (...) {
+            UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_CLIENT, "running device '%s' threw exception", plc->name.c_str());
         }
     }
     std::string client_file;
