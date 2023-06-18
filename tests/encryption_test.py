@@ -105,7 +105,7 @@ async def test_encryption_with_none(server) -> None:
             ]
 
     # test connecting with Aes128Sha256RsaOaep, Sign
-    client = Client(url=url)
+    client = Client(url=url, timeout=10)
     await client.set_security(
         SecurityPolicyAes128Sha256RsaOaep,
         client_certificate,
@@ -116,7 +116,7 @@ async def test_encryption_with_none(server) -> None:
         await client.get_namespace_index(namespace)
 
     # test connecting with Aes128Sha256RsaOaep, Sign & Encryption
-    client = Client(url=url)
+    client = Client(url=url, timeout=10)
     await client.set_security(
         SecurityPolicyAes128Sha256RsaOaep,
         client_certificate,

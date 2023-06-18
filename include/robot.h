@@ -460,6 +460,8 @@ inline void parse_robot_user_node(Robot* robot, UA_Server* server, RobotNode* ba
 }
 
 inline void create_robot_node(Robot* robot, UA_Server* server, const char* client_file_name) {
+    UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_USERLAND, "Creating robot node %s", robot->name.c_str());
+
     std::ifstream specs("specifications/robot-specification.json");
     nlohmann::json data = nlohmann::json::parse(specs, nullptr, true, true);
 
@@ -479,5 +481,5 @@ inline void create_robot_node(Robot* robot, UA_Server* server, const char* clien
             }
         }
     }
-    UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_USERLAND, "Created robot node");
+    UA_LOG_INFO(&file_logger, UA_LOGCATEGORY_USERLAND, "Created robot node %s", robot->name.c_str());
 }
