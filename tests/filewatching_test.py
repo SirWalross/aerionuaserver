@@ -110,7 +110,7 @@ async def test_filewatching() -> None:
         print("Changed file")
 
         # let server reconfigure
-        time.sleep(1)
+        time.sleep(2)
 
         plc = await client.nodes.objects.get_child(f"{nsidx}:R04CPU")
         assert await (await plc.get_child(f"{nsidx}:Production Information")).get_value() == plc_mock.PRODUCTION_INFORMATION
@@ -144,7 +144,7 @@ async def test_filewatching() -> None:
         print("Changed file")
 
         # let server reconfigure
-        time.sleep(1)
+        time.sleep(2)
 
         robot = await client.nodes.objects.get_child(f"{nsidx}:Robot2")
         motion_device: Node = await robot.get_child([f"{nsidx}:MotionDevices", f"{nsidx}:MotionDevice_1"])
@@ -169,7 +169,7 @@ async def test_filewatching() -> None:
         print("Changed file")
 
         # let server reconfigure
-        time.sleep(1)
+        time.sleep(2)
 
         with pytest.raises(ua.uatypes.UaStatusCodeError) as exc_info:
             await client.nodes.objects.get_child(f"{nsidx}:Robot2")
