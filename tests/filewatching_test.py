@@ -50,6 +50,11 @@ def server():
     
     yield
 
+    # print all stderr from server
+    print("Server stderr:")
+    for line in server.stderr:
+        print(line)
+
     # shutdown server
     if sys.platform == "win32":
         server.send_signal(signal.CTRL_C_EVENT)
@@ -57,7 +62,12 @@ def server():
         server.send_signal(signal.SIGINT)
 
     try:
-        server.wait(1)
+        return_code = server.wait(1)
+
+        if return_code:
+            raise subprocess.CalledProcessError(
+                return_code, [os.environ["SERVER_EXECUTABLE"]]
+            )
     except subprocess.TimeoutExpired:
         server.terminate()
         server.wait()
@@ -210,7 +220,7 @@ async def test_filewatching() -> None:
         print("Changed file")
 
         # let server reconfigure
-        time.sleep(20)
+        time.sleep(2)
 
         robot = await client.nodes.objects.get_child(f"{nsidx}:Robot2")
         motion_device: Node = await robot.get_child([f"{nsidx}:MotionDevices", f"{nsidx}:MotionDevice_1"])

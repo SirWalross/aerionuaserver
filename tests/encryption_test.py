@@ -60,13 +60,23 @@ def server(request):
 
     yield
 
+    # print all stderr from server
+    print("Server stderr:")
+    for line in server.stderr:
+        print(line)
+
     if sys.platform == "win32":
         server.send_signal(signal.CTRL_C_EVENT)
     else:
         server.send_signal(signal.SIGINT)
 
     try:
-        server.wait(1)
+        return_code = server.wait(1)
+
+        if return_code:
+            raise subprocess.CalledProcessError(
+                return_code, [os.environ["SERVER_EXECUTABLE"]]
+            )
     except subprocess.TimeoutExpired:
         server.terminate()
         server.wait()
