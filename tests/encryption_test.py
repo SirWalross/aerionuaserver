@@ -57,8 +57,6 @@ def server(request):
     for line in server.stderr:
         if b"TCP network layer listening on" in line:
             break
-        
-    time.sleep(3)
 
     yield
 
@@ -89,10 +87,6 @@ def server(request):
     indirect=True,
 )
 async def test_encryption_with_none(server) -> None:
-    # test connecting without encryption
-    async with Client(url=url, timeout=10) as client:
-        await client.get_namespace_index(namespace)
-
     # test connection endpoints
     async with Client(url=url, timeout=10) as client:
         connection_endpoints = await client.get_endpoints()
@@ -104,13 +98,17 @@ async def test_encryption_with_none(server) -> None:
                 and connection_endpoint.SecurityPolicyUri == endpoint["security_policy_uri"]
             ]
 
+    # test connecting without encryption
+    async with Client(url=url, timeout=10) as client:
+        await client.get_namespace_index(namespace)
+
     # test connecting with Aes128Sha256RsaOaep, Sign
     client = Client(url=url, timeout=10)
     await client.set_security(
         SecurityPolicyAes128Sha256RsaOaep,
         client_certificate,
         private_key,
-        mode=ua.MessageSecurityMode.Sign,
+        mode=ua.MessageSecurityMode.SignAndEncrypt,
     )
     async with client:
         await client.get_namespace_index(namespace)
@@ -121,7 +119,7 @@ async def test_encryption_with_none(server) -> None:
         SecurityPolicyAes128Sha256RsaOaep,
         client_certificate,
         private_key,
-        mode=ua.MessageSecurityMode.SignAndEncrypt,
+        mode=ua.MessageSecurityMode.Sign,
     )
     async with client:
         await client.get_namespace_index(namespace)
