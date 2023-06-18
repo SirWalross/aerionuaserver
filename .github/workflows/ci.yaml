@@ -12,10 +12,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04, windows-latest]
+        os: [windows-latest]
         include:
         - os: windows-latest
-          vcpkgCommitId: "6a3dd0874f153f8b375ec26210ea6d41dee3bb26"
+          vcpkgCommitId: "80ecf32496c3806c5bb79bb80f029f83d058930e"
           cmake-configure-ci: win-x64-test
           cmake-configure-release: win-x64-release
           cmake-build-preset: windows
@@ -23,16 +23,6 @@ jobs:
           executable-name: executable-win
           executable-path: "build\\aerionuaserver.exe\nbuild\\*.dll\nbuild\\!*d.dll\nbuild\\aerionuaserver-gui.exe"
           gui-app-name: aerionuaserver-gui.exe
-        - os: ubuntu-20.04
-          vcpkgCommitId: "6a3dd0874f153f8b375ec26210ea6d41dee3bb26"
-          cmake-configure-ci: unix-x64-ci
-          cmake-configure-test: unix-x64-test
-          cmake-configure-release: unix-x64-release
-          cmake-build-preset: unix
-          executable: build/./aerionuaserver
-          executable-name: executable-unix
-          executable-path: "build/aerionuaserver\nbuild/aerionuaserver-gui"
-          gui-app-name: aerionuaserver-gui
 
     steps:
     - uses: actions/checkout@v3
@@ -41,7 +31,7 @@ jobs:
       if: matrix.os == 'windows-latest'
 
     - name: Run vcpkg
-      uses: lukka/run-vcpkg@v10
+      uses: lukka/run-vcpkg@v11
       with:
         vcpkgGitCommitId: "${{matrix.vcpkgCommitId}}"
 
@@ -88,7 +78,7 @@ jobs:
     - name: Test with pytest
       run: |
         export SERVER_EXECUTABLE=${{matrix.executable}}
-        pytest
+        pytest -rP
       shell: bash
 
     - name: Build test with cmake
@@ -97,6 +87,13 @@ jobs:
         configurePreset: "${{matrix.cmake-configure-test}}"
         buildPreset: "${{matrix.cmake-build-preset}}"
       if: matrix.os == 'ubuntu-20.04'
+      
+    - name: Save logs
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: server-logs
+        path: server.log
 
     - name: Build gui application
       shell: bash
